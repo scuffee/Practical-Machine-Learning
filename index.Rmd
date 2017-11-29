@@ -1,5 +1,5 @@
 ---
-title: "Practical Machine Learning Course Project"
+title: "Practical-Machine-Learning"
 author: "Sandra Cuffee"
 date: "November 29, 2017"
 output: html_document
@@ -10,6 +10,9 @@ toc_float: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## **Summary**
+
 ## **Data Files**
 
 ```{r, echo = FALSE}
@@ -19,23 +22,29 @@ knitr::opts_chunk$set(echo = TRUE)
 ##download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",destfile="pml-testing.csv",method="libcurl")
 ```
 
+### **Data Frames**
+```
+```{r, echo= FALSE}
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+##training<-read.csv("pml-training.csv",header=TRUE,sep=",")
+##testing<-read.csv("pml-testing.csv",header=TRUE, sep=",")
 ```
 
-## Including Plots
+## **Information About the Training and Test Data**
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+### Number of Observations and Variables
+```{r,echo =FALSE}
+##dim(training);dim(testing)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Name of the Variables
+```{r, echo =FALSE}
+
+##names(training)
+```
+
+## **Testing the Data**
+
+
+
+## **Appendix**
