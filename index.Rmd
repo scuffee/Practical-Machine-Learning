@@ -1,0 +1,36 @@
+---
+title: "Predicition"
+author: "Sandra Cuffee"
+date: "November 29, 2017"
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## **Data Files**
+
+```{r, echo = FALSE}
+
+##download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv",destfile="pml-training.csv",method="libcurl")
+
+##download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",destfile="pml-testing.csv",method="libcurl")
+
+### Create Data Frames
+```
+```{r, echo= FALSE}
+
+##training<-read.csv("pml-training.csv",header=TRUE,sep=",")
+##testing<-read.csv("pml-testing.csv",header=TRUE, sep=",")
+```
+
+## **Information About the Training and Test Data**
+
+### **Name of the Variables**
+```{r, echo =FALSE}
+
+##names(training)
+```
