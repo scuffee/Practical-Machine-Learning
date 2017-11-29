@@ -3,11 +3,22 @@ title: "Practical Machine Learning Course Project"
 author: "Sandra Cuffee"
 date: "November 29, 2017"
 output: html_document
+toc: true
+toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## **Data Files**
+
+```{r, echo = FALSE}
+
+##download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv",destfile="pml-training.csv",method="libcurl")
+
+##download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",destfile="pml-testing.csv",method="libcurl")
+```
+
 
 ## R Markdown
 
