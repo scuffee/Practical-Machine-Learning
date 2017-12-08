@@ -10,12 +10,13 @@ toc_float: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
- devtools::install_github('topepo/caret/pkg/caret')
-
-## **Summary**
+### Note:
+## devtools::install_github('topepo/caret/pkg/caret') ,  required for parallel processing of data files.
 
 
 ## **Data Files**
+
+The data files were retrieved from: http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har
 
 ```{r, echo = FALSE}
 download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv",destfile="pml-training.csv",method="libcurl")
@@ -25,7 +26,7 @@ download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.c
 
 ## **Data Frames**
 
-Two data frames were created in order to explore, run tests, and generate graphs pertaining to the data sets.  The training data frame was used to create the training and vlaidation dat test sets.  The testing data frame was use st the test set in orde to perform predictions.r 
+Two data frames were created in order to explore, run tests, and generate graphs pertaining to the data sets.  The training data frame was used to create the training and vlaidation data sets.  The testing data frame was used for the test set. 
 
 
 ```{r, echo= FALSE}
@@ -49,7 +50,7 @@ sum(is.na(training));sum(is.na(testing))#check for missing data
 ```
 ###  Cleaning the Training and Validation Data 
 
-Both data frames were reviewed in table format using the fix function to help determine what data would be useful for testing the training and validation data.  The glimpse function was used to verify the predictor variables under test.
+Both data frames were reviewed in table format using the fix method to help determine what data would be useful for testing the training and validation data.  The glimpse function was used to verify the predictor variables under test.  No changes were made to the test data.
 
 ```{r, echo=FALSE}
 nv<-nearZeroVar(training,saveMetrics=TRUE,names = TRUE) # ID Predictors to Remove
@@ -63,19 +64,15 @@ sum(is.na(training));glimpse(training);dim(training)
 
 
 glimpse(testing);dim(testing);sum(is.na(testing))
-
-nv2<-nearZeroVar(testing,saveMetrics=TRUE,names = TRUE) # ID Predictors to Remove
-#fix(testing) 
-##testing=testing[,c(-1:-6,-12:-36,-50:-59,-69:-83,-87:-101,-103:-112,-125:-139,-141:-150)]
 sum(is.na(testing));glimpse(testing);dim(testing) 
 
 ```
 
 ## **Random Forest Test on Training Set**
 
-Random forest tests using the caret function and parallel processing to reduce the run time were peformed on the training and validation test sets.
+Random forest tests were conducted using the caret function for accuracy and parallel processing was used to reduce the run time of the tests on the training and validation data sets. The mtry equal to 27 provided the best results for training and validation data sets.  The training data set  had a 99.68% accuracy and the smaller validation data set had a 98.75% accuracy.
 
-```{r, library(caret), library(doParallel), library(parallrl),echo=FALSE}
+```{r, library(caret), library(doParallel), library(parallel),echo=FALSE}
 set.seed(95014)
 
  inTraining <- createDataPartition(training$classe, p = .75, list=FALSE)
@@ -114,18 +111,18 @@ set.seed(95014)
 
 ### Random Forest Test on Test Set
 
-The caret predict function was used on the test set.
+The caret predict function was used on the test data set.
 
 ```{r, echo=FALSE}
 testSet<-predict(fit,testing)
 
 ```
 
- ## **Fit Models**
+ ## **Predictions**
 
 Statistical analysis was completed for both the training and validation sets.
 
-```{r,library(craret), echo=FALSE}
+```{r,library(caret), echo=FALSE}
 fit
 fit$resample
 confusionMatrix.train(fit)
@@ -140,21 +137,45 @@ fit2$finalModel
 validationFit<-fit2$finalModel
 print(validationFit)
 
-testSet
+print(testSet)
 
 ```
 
 ## **Plots**
 
-The data plots for the training, validation, and test sets have been provided below.
+###Training Prediction Plot
 ```{r, library(ggplot2), echo=FALSE}
 
-par(mfrow=c(1,3))
-plot(fit);plot(fit2);plot(testSet)
+
+plot(fit)
 ```
 
+### Validation Prediction Plot
+
+```{r, echo = FALSE}
+plot(fit2)
+```
+
+###Test Predicition Plot
+
+```{r, echo=FALSE}
+plot(testSet)
+```
 ## **Appendix**
 
-### References
+### References 
+
+gh-page setup
+
+https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-ghPagesSetup.md
+
+Improving Peformance of Random Forest in caret::train()
+
+https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-randomForestPerformance.md
 
 
+Weight Lifting Exercises Dataset
+
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. Qualitative Activity Recognition of Weight Lifting Exercises. Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013
+
+. 
