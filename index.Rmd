@@ -1,18 +1,12 @@
 ---
 title: "Practical-Machine-Learning"
-author: "Sandra Cuffee"
-date: "December 7, 2017"
-output: html_document
-toc: true
-toc_float: true
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+author: "Sandra Cuffee:opts_chunk$set(echo = TRUE)
 ```
 ### Note:
-## devtools::install_github('topepo/caret/pkg/caret') ,  required for parallel processing of data files.
 
+devtools::install_github('topepo/caret/pkg/caret') ,  required for parallel processing of data files.
+
+Project can e viewed at: http://scuffee.github.io/Practical-Machine-Learning/index.html
 
 ## **Data Files**
 
@@ -26,7 +20,7 @@ download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.c
 
 ## **Data Frames**
 
-Two data frames were created in order to explore, run tests, and generate graphs pertaining to the data sets.  The training data frame was used to create the training and vlaidation data sets.  The testing data frame was used for the test set. 
+Two data frames were created in order to explore, run tests, and generate graphs pertaining to the data sets.  The training data frame was used to create the training and validation data sets.  The testing data frame was used for the test set. 
 
 
 ```{r, echo= FALSE}
