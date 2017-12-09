@@ -3,11 +3,11 @@ title: "Practical-Machine-Learning"
 author: "Sandra Cuffee"
 date: December 7, 2017
 output: html_document
-toc: TRUE
 ---
 
 
 ```{r setup, include=FALSE}
+library(dplyr);library(utils);library(caret);library(doParallel);library(ggplot2);library(parallel);library(stats)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -16,7 +16,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 devtools::install_github('topepo/caret/pkg/caret') , was required for parallel processing of data file.
 
-My project can be viewed at: http://scuffee.github.io/Practical-Machine-Learning/index.html
+My project can be viewed at:
+
+http://scuffee.github.io/Practical-Machine-Learning/index.html
+
+
+## **Summary**
+
+A training and testing data set were used to predict to quantify how six participants performed five exercises.  The training data was cleaned, 53 of the 160 variables along with 9812 of 19622 oberservation were used as a basis for the predictions.  Twenty observations with 160 variables were use to predict how well the exercises were done. The training data indicated classe A, performing the bicep curls according to specification; followed by classe B, throwing the elbows to the front; classe E, throwing the  hips to the front was third; classe C fourth, lifting the dumbell halfway; and classe D, lowering the dumbell halfway.  using random forest regression he training data accuracy was 99.49% with an oob error rate of .4%, The test data proability prediction matched the training data results as shown in the histogram and bloxplot in the appendix.
+
+
+
 
 ## **Data Files**
 
@@ -41,19 +51,20 @@ testing<-(read.csv("pml-testing.csv",header=TRUE, sep=","))
 
 ## **Information About the Training and Test Data**
 
-"Six young health participants were asked to perform one set of 10 repetitions of the Unilateral Dumbbell Biceps Curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E)."  The training data frame consisted of 19,622 observations and 160 variables.  The test data set consisted of 20 observations and 160 variables.
+"Six young health participants were asked to perform one set of 10 repetitions of the Unilateral Dumbbell Biceps Curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E).( Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H., 2013)"  The training data frame consisted of 19,622 observations and 160 variables.  The test data set consisted of 20 observations and 160 variables.
 
 ### Observations and Predictors
-```{r,library(dplyr),library(utils),echo =FALSE}
-library(dplyr);library(utils);library(caret);library(doParallel)
-library(parallel);library(utils);library(ggplot2)
+
+```{r, library(dplyr), library(utils), library(caret), library(doParallel), library(parallel), library(ggplot2), echo =FALSE}
+
 glimpse(training) #print variable names and types
 sum(is.na(training)) #check for missing data
 
 ```
+
 ###  Cleaning the Training Data 
 
-the training data frame was reviewed in table format using fix() and glimpse() to help determine what data would be useful for testing the training data.  The glimpse function was used to verify the predictor variables under test.  The training data set was reduced to 53 variables.  No changes were made to the test data.
+The training data frame was reviewed in table format using fix() and glimpse() to help determine what data would be useful for testing the training data.  The glimpse function was used to verify the predictor variables under test.  The training data set was reduced to 53 variables.  No changes were made to the test data.
 
 ```{r, echo=FALSE}
 
@@ -70,9 +81,10 @@ sum(is.na(training));glimpse(training)
 
 ## **Random Forest Analysis on Training Data Set**
 
-Random forest tests were conducted using the caret function for accuracy and parallel processing was used to reduce the run time of the tests on the training data set. The mtry equal to 27 provided the best results for the training data set.  The accuracy was 99.68%  and the
+Random forest tests were conducted using the caret function for accuracy and parallel processing was used to reduce the run time of the tests on the training data set. The mtry equal to 27 provided the best results for the training data set.  The accuracy was 99.49% and oob error rate was .4% as indicated in the cross validation test conducted.
 
-```{r, library(caret), library(doParallel), library(parallel),echo=FALSE}
+```{r, echo=FALSE}
+library(caret);library(doParallel);library(parallel)
 set.seed(97544)
  inTrain <- createDataPartition(training$classe,list=FALSE)
  trainingTrain<-training[inTrain,]
@@ -85,12 +97,14 @@ set.seed(97544)
  fit <- train(x,y, method="rf",data=training,trControl = fitControl)
  stopCluster(cluster)
  registerDoSEQ()
+ 
 ```
 
 ### Predictions with the Test Data
-The test data consisted of 20 observations and 160 predictors.  Since the trainingSet was the basis for the test data, 53 predictors were used. The initial prediction of the test data was the raw data and the second prediction consisted of the probabilities. the raw data output shows what levels would be predicted and the probability output shows how likely the particular classe would be picked.  
+The test data consisted of 20 observations and 160 predictors.  Since the trainingSet was the basis for the test data, 53 predictors were used. The initial prediction of the test data was the raw data and the second prediction consisted of the probabilities. the raw data output showed what classe level would be predicted and the probability output showed how likely the particular classe would be picked.  
 
-```{r, echo=FALSE}
+```{r, fit, echo=FALSE}
+
 testSet<-predict(fit,testing,type="raw")
 testSet1<-predict(fit,testing,type="prob")
 
@@ -98,9 +112,9 @@ testSet1<-predict(fit,testing,type="prob")
 
 ### Prediction Results
 
-Statistical analysis was completed for the training and test data sets.  The training data was resampled and cross validated for accuracy. The test data predictions was based on the training data. trainingSet represents the training data results and testSet represents the test prediction results.
+Statistical analysis was completed for the training and test data sets. traingSet represented the training data, testSet represented the raw prediction test data and tesSet1 represented the probbility test data. The training data was resampled and cross validated for accuracy.  The trainingset accuracy was cross-validated with an accuracy rate of 99.49% when the optimal mtry was 27.  The cross-validation results also indicated classe A had the higest prediction of 28.4, classe B was second at 19.2, classe E third at 18.3, classe C fourth at 17.3, and classe D had the lowest prediction of 16.2 The out oob error rate was .4%.  The testSet raw data indicated classe A  and B had a  prediction frequency of 7, followed by 4 for classe B, classe C and D were tied at 1 each.  the test data prediction supports the training data results. 
 
-```{r,library(caret), echo=FALSE}
+```{r, echo=FALSE}
 fit
 fit$resample
 confusionMatrix.train(fit)
@@ -114,7 +128,7 @@ print(testSet);print(testSet1)
 
 ## **Plots**
 
-A plot was generated for the results of each data set.
+A diagnostic plot was created for the trainingSet. A histogram showing number of times each level was predicted and a boxplot of the probability of each level predicted.  The histogram showl classe A was the most frequently predicted follow bt classe B.  the boxplot indicates classe A had the higest prediction probability, followed by classe.  Classe C, D, and E had low frequency counts and low probibilitie of being predicted. 
 
 ###  Training Set Diagnostics
 ```{r, library(ggplot2), echo=FALSE}
