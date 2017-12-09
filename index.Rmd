@@ -1,12 +1,22 @@
 ---
 title: "Practical-Machine-Learning"
-author: "Sandra Cuffee:opts_chunk$set(echo = TRUE)
+author: "Sandra Cuffee"
+date: December 7, 2017
+output: html_document
+toc: TRUE
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
-### Note:
 
-devtools::install_github('topepo/caret/pkg/caret') ,  required for parallel processing of data files.
 
-Project can e viewed at: http://scuffee.github.io/Practical-Machine-Learning/index.html
+## **Note:**
+
+devtools::install_github('topepo/caret/pkg/caret') , was required for parallel processing of data file.
+
+My project can be viewed at: http://scuffee.github.io/Practical-Machine-Learning/index.html
 
 ## **Data Files**
 
@@ -18,9 +28,9 @@ download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.
 download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",destfile="pml-testing.csv",method="libcurl")
 ```
 
-## **Data Frames**
+## **The Data**
 
-Two data frames were created in order to explore, run tests, and generate graphs pertaining to the data sets.  The training data frame was used to create the training and validation data sets.  The testing data frame was used for the test set. 
+Two data frames were created in order to explore, run tests, and generate graphs pertaining to the training and test data.  The training data frame was used to create the training data set.  The testing data frame was used for the test data set. 
 
 
 ```{r, echo= FALSE}
@@ -31,22 +41,22 @@ testing<-(read.csv("pml-testing.csv",header=TRUE, sep=","))
 
 ## **Information About the Training and Test Data**
 
-"Six young health participants were asked to perform one set of 10 repetitions of the Unilateral Dumbbell Biceps Curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E)."
+"Six young health participants were asked to perform one set of 10 repetitions of the Unilateral Dumbbell Biceps Curl in five different fashions: exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E)."  The training data frame consisted of 19,622 observations and 160 variables.  The test data set consisted of 20 observations and 160 variables.
 
-### Number of Observations,Variables, and NAs
+### Observations and Predictors
 ```{r,library(dplyr),library(utils),echo =FALSE}
 library(dplyr);library(utils);library(caret);library(doParallel)
 library(parallel);library(utils);library(ggplot2)
-dim(training);dim(testing) #A count of observations and variables
 glimpse(training) #print variable names and types
-sum(is.na(training));sum(is.na(testing))#check for missing data
+sum(is.na(training)) #check for missing data
 
 ```
-###  Cleaning the Training and Validation Data 
+###  Cleaning the Training Data 
 
-Both data frames were reviewed in table format using the fix method to help determine what data would be useful for testing the training and validation data.  The glimpse function was used to verify the predictor variables under test.  No changes were made to the test data.
+the training data frame was reviewed in table format using fix() and glimpse() to help determine what data would be useful for testing the training data.  The glimpse function was used to verify the predictor variables under test.  The training data set was reduced to 53 variables.  No changes were made to the test data.
 
 ```{r, echo=FALSE}
+
 nv<-nearZeroVar(training,saveMetrics=TRUE,names = TRUE) # ID Predictors to Remove
 training=training[,c(-6,-12:-17,-20,-26,-51:-59,-69:-75,-78,-79,-81,-82,-87:-92,-95,-98,-101,-125:-131,-133,-134,-139,-142:-150)]
 ##fix(training)
@@ -54,107 +64,79 @@ training = training[,c(-11:-25)]
 ##fix(training)
 training = training[,c(-1:-5,-11, -12, -26,-36:-39,-43:-48,-50:-59,-72:-76,-78)]
 ##fix(training)
-sum(is.na(training));glimpse(training);dim(training)
-
-
-glimpse(testing);dim(testing);sum(is.na(testing))
-sum(is.na(testing));glimpse(testing);dim(testing) 
+sum(is.na(training));glimpse(training)
 
 ```
 
-## **Random Forest Test on Training Set**
+## **Random Forest Analysis on Training Data Set**
 
-Random forest tests were conducted using the caret function for accuracy and parallel processing was used to reduce the run time of the tests on the training and validation data sets. The mtry equal to 27 provided the best results for training and validation data sets.  The training data set  had a 99.68% accuracy and the smaller validation data set had a 98.75% accuracy.
+Random forest tests were conducted using the caret function for accuracy and parallel processing was used to reduce the run time of the tests on the training data set. The mtry equal to 27 provided the best results for the training data set.  The accuracy was 99.68%  and the
 
 ```{r, library(caret), library(doParallel), library(parallel),echo=FALSE}
-set.seed(95014)
-
- inTraining <- createDataPartition(training$classe, p = .75, list=FALSE)
- trainingTrain <- training[inTraining,]
- testingTrain <- training[-inTraining,]
+set.seed(97544)
+ inTrain <- createDataPartition(training$classe,list=FALSE)
+ trainingTrain<-training[inTrain,]
+ testTrain<-training[-inTrain,]
  y <- trainingTrain[,54]
  x <- trainingTrain[,-54]
  cluster <- makeCluster(detectCores() - 1)
  registerDoParallel(cluster)
  fitControl <- trainControl(method = "cv",number = 5,allowParallel = TRUE)
- fit <- train(x,y, method="rf",data=trainingTrain,trControl = fitControl)
+ fit <- train(x,y, method="rf",data=training,trControl = fitControl)
  stopCluster(cluster)
  registerDoSEQ()
- fit
 ```
 
-###  Random Forest Test on Validation Set
-
-```{r, echo = FALSE}
-
-set.seed(95014)
-
- inTraining <- createDataPartition(training$classe, p = .75, list=FALSE)
- trainingTrain <- training[inTraining,]
- testingTrain <- training[-inTraining,]
- y <- testingTrain[,54]
- x <- testingTrain[,-54]
- cluster <- makeCluster(detectCores() - 1)
- registerDoParallel(cluster)
- fitControl2 <- trainControl(method = "cv",number = 5,allowParallel = TRUE)
- fit2 <- train(x,y, method="rf",data=training,trControl = fitControl2)
- stopCluster(cluster)
- registerDoSEQ()
- fit2
-```
-
-### Random Forest Test on Test Set
-
-The caret predict function was used on the test data set.
+### Predictions with the Test Data
+The test data consisted of 20 observations and 160 predictors.  Since the trainingSet was the basis for the test data, 53 predictors were used. The initial prediction of the test data was the raw data and the second prediction consisted of the probabilities. the raw data output shows what levels would be predicted and the probability output shows how likely the particular classe would be picked.  
 
 ```{r, echo=FALSE}
-testSet<-predict(fit,testing)
+testSet<-predict(fit,testing,type="raw")
+testSet1<-predict(fit,testing,type="prob")
 
 ```
 
- ## **Predictions**
+### Prediction Results
 
-Statistical analysis was completed for both the training and validation sets.
+Statistical analysis was completed for the training and test data sets.  The training data was resampled and cross validated for accuracy. The test data predictions was based on the training data. trainingSet represents the training data results and testSet represents the test prediction results.
 
 ```{r,library(caret), echo=FALSE}
 fit
 fit$resample
 confusionMatrix.train(fit)
 fit$finalModel
-trainingFit<-(fit$finalModel)
-print(trainingFit)
+trainingSet<-(fit$finalModel)
+print(trainingSet)
 
-fit2
-fit2$resample
-confusionMatrix(fit2)
-fit2$finalModel
-validationFit<-fit2$finalModel
-print(validationFit)
-
-print(testSet)
+print(testSet);print(testSet1)
 
 ```
 
 ## **Plots**
 
-###Training Prediction Plot
+A plot was generated for the results of each data set.
+
+###  Training Set Diagnostics
 ```{r, library(ggplot2), echo=FALSE}
 
 
-plot(fit)
+plot(trainingSet,pch=19,cex=0.5,col="red")
 ```
 
-### Validation Prediction Plot
-
-```{r, echo = FALSE}
-plot(fit2)
-```
-
-###Test Predicition Plot
+### Frequency of Test Predicition Levels
 
 ```{r, echo=FALSE}
+
 plot(testSet)
 ```
+
+### Probablity of Each Level
+
+```{r, echo = FALSE}
+
+boxplot(testSet1,col="blue")
+```
+
 ## **Appendix**
 
 ### References 
@@ -163,9 +145,15 @@ gh-page setup
 
 https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-ghPagesSetup.md
 
+
 Improving Peformance of Random Forest in caret::train()
 
 https://github.com/lgreski/datasciencectacontent/blob/master/markdown/pml-randomForestPerformance.md
+
+
+Practical Machine Learning Project
+
+http://scuffee.github.io/Practical-Machine-Learning/index.html
 
 
 Weight Lifting Exercises Dataset
